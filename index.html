@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroAquacult Pro: ระบบประเมินและออกแบบเครื่องให้อากาศอัจฉริยะ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* โทนสีเขียวหัวเป็ดอ่อน */
+            --teal-dark: #004D40;
+            --teal-main: #00796B;
+            --teal-light: #4DB6AC;
+            --teal-bg-1: #80CBC4;
+            --teal-bg-2: #E0F2F1;
+            --teal-neon: #A7FFEB;
+            --accent: #FF8F00;
+            --text-main: #00332C;
+        }
+        body { 
+            font-family: 'Sarabun', sans-serif; 
+            background: linear-gradient(135deg, var(--teal-bg-1) 0%, var(--teal-light) 50%, var(--teal-main) 100%);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 20px; 
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: auto; }
+        
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding: 40px 20px; 
+            background: linear-gradient(135deg, rgba(0, 77, 64, 0.8), rgba(0, 150, 136, 0.85)); 
+            backdrop-filter: blur(12px);
+            color: white; 
+            border-radius: 20px; 
+            box-shadow: 0 15px 25px -5px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .header h1 { margin: 0; font-size: 2.5em; font-weight: 700; color: #E0F2F1; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .header p { font-size: 1.2em; color: #B2DFDB; margin-top: 10px; }
+        
+        .developer { 
+            font-size: 1.6em; 
+            font-weight: 700; 
+            color: #FFCA28; 
+            margin-top: 15px; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            display: inline-block;
+            padding: 8px 25px;
+            border: 2px solid #FFCA28;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .counter-container { margin-top: 25px; display: flex; justify-content: center; }
+        .counter { 
+            font-size: 1.2em; 
+            background: rgba(0, 51, 44, 0.6); 
+            color: #A7FFEB;
+            padding: 10px 25px; 
+            border-radius: 25px; 
+            font-weight: 600;
+        }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
+        
+        .card { 
+            background: linear-gradient(145deg, var(--teal-bg-2), #B2DFDB); 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.8), 5px 10px 20px rgba(0,77,64,0.2);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .card h2 { 
+            border-bottom: 3px dashed var(--teal-main); 
+            padding-bottom: 12px; 
+            margin-top: 0; 
+            color: var(--teal-dark); 
+            font-size: 1.5em;
+            text-align: center;
+        }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { 
+            display: block; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--teal-dark); 
+            text-align: center;
+        }
+        
+        .form-group input, .form-group select { 
+            width: 100%; 
+            padding: 14px; 
+            background: linear-gradient(to bottom, #E0F2F1, var(--teal-neon)); 
+            border: 2px solid var(--teal-light); 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 1.1em; 
+            font-weight: 600;
+            color: var(--teal-dark);
+            font-family: 'Sarabun', sans-serif;
+            text-align: center;
+            text-align-last: center;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--teal-main);
+            box-shadow: 0 0 0 4px rgba(0, 121, 107, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; flex-wrap: wrap;}
+        
+        button.btn-calc, button.btn-print { 
+            flex: 1;
+            min-width: 200px;
+            padding: 18px; 
+            color: white; 
+            border: 2px solid rgba(255,255,255,0.3); 
+            border-radius: 15px; 
+            font-size: 1.3em; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: transform 0.2s, box-shadow 0.2s; 
+            font-family: 'Sarabun', sans-serif;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        button.btn-calc { background: linear-gradient(135deg, var(--teal-main), var(--teal-dark)); }
+        button.btn-calc:hover { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,77,64,0.4); background: linear-gradient(135deg, var(--teal-light), var(--teal-main)); }
+        
+        button.btn-print { background: linear-gradient(135deg, #F57C00, #E65100); display: none; }
+        button.btn-print:hover { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(230,81,0,0.4); background: linear-gradient(135deg, #FF9800, #F57C00); }
+        
+        .result-box { 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            text-align: center;
+            padding: 18px; 
+            background: linear-gradient(135deg, #E0F7FA, #B2EBF2); 
+            margin-bottom: 15px; 
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.8);
+            border-bottom: 4px solid var(--teal-main);
+        }
+        .result-label { font-weight: 600; color: #006064; font-size: 1.05em; }
+        .result-value { font-weight: 700; color: var(--teal-dark); font-size: 1.4em; margin-top: 5px; }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #FFF8E1, #FFECB3);
+            border-bottom: 5px solid var(--accent);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            text-align: center;
+        }
+        .highlight-box h3 { margin-top: 0; color: #E65100; font-size: 1.4em; }
+        
+        .discussion { 
+            margin-top: 35px; 
+            line-height: 1.8; 
+            padding: 40px; 
+            background: linear-gradient(145deg, var(--teal-bg-2), #B2DFDB); 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.7);
+            display: none; 
+            font-size: 1.15em;
+        }
+        .discussion h3 { 
+            color: var(--teal-dark); 
+            font-size: 1.6em; 
+            border-bottom: 2px dashed var(--teal-main); 
+            padding-bottom: 10px; 
+            text-align: center;
+        }
+        .discussion p { margin-bottom: 20px; color: #004D40; }
+        
+        .dynamic-motor-result { background: rgba(255,255,255,0.5); border-radius: 12px; padding: 15px; margin-top: 15px; border: 2px solid var(--teal-light); }
+        .guru-tip { background: rgba(255, 255, 255, 0.4); border-left: 5px solid var(--teal-main); padding: 15px 20px; border-radius: 0 10px 10px 0; margin-top: 15px; }
+        .hybrid-box { display: flex; justify-content: space-around; margin-top: 15px; background: rgba(0,121,107,0.1); padding: 15px; border-radius: 10px; border: 1px dashed var(--teal-main); }
+
+        /* ========================================= */
+        /* ชุดคำสั่งสำหรับการพิมพ์ (Print) โดยเฉพาะ */
+        /* ========================================= */
+        @media print {
+            @page { margin: 1cm; size: A4 auto; }
+            html, body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0 !important; 
+                margin: 0 !important;
+                height: auto !important; 
+                width: 100% !important;
+            }
+            .container { max-width: 100% !important; margin: 0 !important; width: 100% !important; }
+            
+            /* เปลี่ยน Grid เป็น Block เพื่อให้ข้อมูลเรียงดิ่ง ไม่เกิดที่ว่าง */
+            .grid { display: block !important; gap: 0 !important; }
+            
+            /* ลดขนาดส่วนหัวและซ่อนแสงเงา */
+            .header { background: white !important; color: black !important; box-shadow: none !important; border: 1px solid #ccc !important; padding: 10px !important; margin-bottom: 10px !important; border-radius: 0 !important;}
+            .header h1 { color: black !important; text-shadow: none !important; font-size: 1.6em !important; margin: 0 !important; }
+            .header p, .developer, .counter { color: #333 !important; text-shadow: none !important; background: none !important; border: none !important; box-shadow: none !important; font-size: 0.9em !important; padding: 0 !important; margin-top: 5px !important; text-align: center !important; }
+            
+            /* ทำให้การ์ดและผลลัพธ์สามารถตัดหน้ากระดาษได้ตามธรรมชาติ (Auto Page Break) */
+            .card, .discussion { 
+                background: white !important; 
+                box-shadow: none !important; 
+                border: none !important; 
+                margin: 0 0 10px 0 !important; 
+                padding: 0 !important; 
+                page-break-inside: auto !important; 
+            }
+            
+            h2, h3 { color: black !important; border-bottom: 1px solid #000 !important; font-size: 1.2em !important; margin-top: 10px !important; margin-bottom: 5px !important; padding-bottom: 2px !important; }
+            
+            .form-group { margin-bottom: 4px !important; page-break-inside: avoid !important; }
+            .form-group label { font-size: 0.9em !important; margin-bottom: 2px !important; text-align: left !important; display: inline-block; width: 50%; }
+            .form-group input, .form-group select { 
+                background: white !important; 
+                color: black !important; 
+                border: none !important; 
+                border-bottom: 1px dotted #000 !important; 
+                box-shadow: none !important; 
+                padding: 2px !important; 
+                font-size: 0.9em !important; 
+                text-align: left !important;
+                display: inline-block;
+                width: 45%;
+                border-radius: 0 !important;
+            }
+            
+            .result-box, .highlight-box, .dynamic-motor-result, .guru-tip, .hybrid-box { 
+                background: white !important; 
+                border: 1px solid #ccc !important; 
+                box-shadow: none !important; 
+                padding: 8px !important; 
+                margin-top: 5px !important; 
+                border-radius: 0 !important; 
+                page-break-inside: avoid !important; 
+            }
+            
+            /* ซ่อนปุ่มต่างๆ เวลากดพริ้นท์ */
+            .btn-group { display: none !important; }
+            
+            .result-value, strong, .result-label { color: black !important; }
+            .discussion p { color: black !important; margin-bottom: 5px !important; font-size: 0.9em !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>AeroAquacult Pro</h1>
+        <p>ระบบประเมินและออกแบบเครื่องให้อากาศอัจฉริยะ</p>
+        <div class="developer">ออกแบบและพัฒนาโปรแกรมโดย รศ.ดร.เจษฎา อิสเหาะ</div>
+        <div class="counter-container">
+            <div class="counter">ยอดผู้เข้าใช้งานสะสม: <span id="visit-count">กำลังโหลด...</span> ครั้ง</div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Input Form -->
+        <div class="card">
+            <h2>📝 1. ป้อนข้อมูลระบบการเลี้ยง</h2>
+            
+            <div class="form-group">
+                <label>1) ประเภทของเครื่องให้อากาศ</label>
+                <select id="aeratorType" class="nav-input">
+                    <optgroup label="ใช้งานรูปแบบเดี่ยว (Single System)">
+                        <option value="pw">เครื่องตีน้ำใบพัด (Paddlewheel)</option>
+                        <option value="airdisc">จานจ่ายอากาศ (Airdisc)</option>
+                        <option value="airlift">ระบบแอร์ลิฟท์ (Airlift)</option>
+                        <option value="mnb21">ไมโครนาโนบับเบิ้ล (MNB + อากาศ 21%)</option>
+                        <option value="mnb99">ไมโครนาโนบับเบิ้ล (MNB + ออกซิเจนบริสุทธิ์ 99%)</option>
+                    </optgroup>
+                    <optgroup label="ใช้งานแบบบูรณาการ 2 รูปแบบ (Hybrid 50:50)">
+                        <option value="hybrid_pw_mnb21">ระบบบูรณาการ: ใบพัด + MNB (อากาศ 21%)</option>
+                        <option value="hybrid_pw_mnb99">ระบบบูรณาการ: ใบพัด + MNB (ออกซิเจน 99%)</option>
+                        <option value="hybrid_pw_airdisc">ระบบบูรณาการ: ใบพัด + จานจ่ายอากาศ (Airdisc)</option>
+                        <option value="hybrid_airlift_mnb21">ระบบบูรณาการ: แอร์ลิฟท์ + MNB (อากาศ 21%)</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>2) ชนิดของสัตว์น้ำที่เลี้ยง</label>
+                <input type="text" id="species" class="nav-input" placeholder="เช่น ปลานิลแดง, กุ้งขาว" value="ปลานิลแดง">
+            </div>
+
+            <div class="form-group">
+                <label>3) เป้าหมายขนาดมวลชีวภาพ (กิโลกรัม)</label>
+                <input type="number" id="biomass" class="nav-input" placeholder="เช่น 5000" value="5000">
+            </div>
+
+            <div class="form-group">
+                <label>4) ปริมาณอาหารที่ให้ต่อวัน (กิโลกรัม)</label>
+                <input type="number" id="feed" class="nav-input" placeholder="เช่น 100" value="100">
+            </div>
+
+            <div class="form-group">
+                <label>5) ระดับโปรตีนในอาหาร (%)</label>
+                <input type="number" id="protein" class="nav-input" placeholder="เช่น 32" value="32">
+            </div>
+
+            <div class="form-group">
+                <label>6) อุณหภูมิของน้ำในบ่อ (°C)</label>
+                <input type="number" id="temp" class="nav-input" placeholder="เช่น 28" value="28">
+            </div>
+
+            <div class="form-group">
+                <label>7) ระดับ DO ของน้ำภายในบ่อที่คาดหวัง (mg/L)</label>
+                <input type="number" id="targetDO" class="nav-input" placeholder="เช่น 5" value="5.0" step="0.1">
+            </div>
+
+            <div class="form-group">
+                <label>8) สภาพของน้ำ / รูปแบบระบบการเลี้ยง</label>
+                <select id="alphaSelect" class="nav-input">
+                    <option value="1.00">น้ำสะอาดบริสุทธิ์ (Clean Tap Water) [α=1.00]</option>
+                    <option value="0.90">ระบบ RAS ความหนาแน่นต่ำถึงปานกลาง [α=0.90]</option>
+                    <option value="0.775" selected>ระบบ RAS ความหนาแน่นสูง [α=0.775]</option>
+                    <option value="0.725">บ่อดิน / บ่อเลี้ยงระบบเปิด [α=0.725]</option>
+                    <option value="0.60">ระบบ Biofloc (BFT) [α=0.60]</option>
+                    <option value="0.40">น้ำทิ้งจากฟาร์ม / บ่อบำบัดน้ำเสีย [α=0.40]</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>9) ระดับความเค็มของน้ำ</label>
+                <select id="betaSelect" class="nav-input">
+                    <option value="1.000" selected>0 ppt - น้ำจืดสนิท [β=1.000]</option>
+                    <option value="0.975">5 ppt - น้ำกร่อยเจือจาง [β=0.975]</option>
+                    <option value="0.950">10 ppt - น้ำกร่อยปานกลาง [β=0.950]</option>
+                    <option value="0.925">15 ppt - น้ำกร่อย [β=0.925]</option>
+                    <option value="0.902">20 ppt - น้ำกร่อยค่อนข้างเค็ม [β=0.902]</option>
+                    <option value="0.855">30 ppt - ใกล้เคียงน้ำทะเล [β=0.855]</option>
+                    <option value="0.835">35 ppt - น้ำทะเลปกติ [β=0.835]</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-calc nav-input" onclick="calculateAeration()">ประมวลผลการคำนวณ</button>
+                <button id="btnPrint" class="btn-print" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
+            </div>
+        </div>
+
+        <!-- Output Dashboard -->
+        <div class="card">
+            <h2>📊 2. แดชบอร์ดสรุปผลการวิเคราะห์</h2>
+            
+            <div class="result-box">
+                <span class="result-label">1) อัตราใช้ออกซิเจนเฉพาะของสัตว์น้ำ (OCRfish)</span>
+                <span class="result-value" id="resOcrFish">- kg O₂/day</span>
+            </div>
+            
+            <div class="result-box">
+                <span class="result-label">2) อัตราใช้ออกซิเจนของแบคทีเรียทำน้ำใส (OCRbacteria)</span>
+                <span class="result-value" id="resOcrBact">- kg O₂/day</span>
+            </div>
+            
+            <div class="result-box" style="background: linear-gradient(135deg, #B2DFDB, #80CBC4); border-bottom-color: #004D40;">
+                <span class="result-label">3) ความต้องการออกซิเจนรวมทั้งหมด (Total Design OCR)*</span>
+                <span class="result-value" id="resOcrTotal" style="color: #004D40;">- kg O₂/hr</span>
+                <span style="font-size: 0.85em; color: #00695C; margin-top: 5px;">*เผื่อค่า BOD 20% และคิดเป็นภาระรายชั่วโมงแล้ว</span>
+            </div>
+
+            <div class="result-box">
+                <span class="result-label">4) ประสิทธิภาพเครื่องให้อากาศเมื่อลงน้ำจริง</span>
+                <span class="result-value" id="resCf">- %</span>
+            </div>
+
+            <div class="highlight-box">
+                <h3>5) ขนาดเครื่องให้อากาศที่คุณต้องใช้จริง</h3>
+                <div style="margin-bottom:10px; font-weight: 600; color: #E65100;">
+                    ค่าออกซิเจนมาตรฐานที่เครื่องต้องผลิตให้ได้ (SOTR):<br>
+                    <strong id="resSotr" style="font-size: 1.4em;">- kg O₂/hr</strong>
+                </div>
+                
+                <div id="motorResultContainer" class="dynamic-motor-result">
+                    <span style="color: #666;">(รอการประมวลผล...)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Section -->
+    <div id="discussionSection" class="discussion">
+        <h3>💡 สรุปผลและข้อแนะนำแบบฟันธง!</h3>
+        <div id="discussionContent"></div>
+    </div>
+</div>
+
+<script>
+    const aeratorData = {
+        'pw': { name: 'เครื่องตีน้ำใบพัด (Paddlewheel)', sae: 1.5, icon: '💦' },
+        'airdisc': { name: 'จานจ่ายอากาศ (Airdisc)', sae: 2.0, icon: '🫧' },
+        'airlift': { name: 'แอร์ลิฟท์ (Airlift)', sae: 1.2, icon: '🌪️' },
+        'mnb21': { name: 'ไมโครนาโนบับเบิ้ล (อากาศ 21%)', sae: 4.0, icon: '✨' },
+        'mnb99': { name: 'ไมโครนาโนบับเบิ้ล (ออกซิเจน 99%)', sae: 15.0, icon: '🚀' }
+    };
+
+    const BASE_VISITS = 55;
+    let localVisits = localStorage.getItem('aeroaquacult_v8_visits'); 
+    if (!localVisits) {
+        localVisits = 1;
+    } else {
+        localVisits = parseInt(localVisits) + 1;
+    }
+    localStorage.setItem('aeroaquacult_v8_visits', localVisits);
+    document.getElementById('visit-count').innerText = (BASE_VISITS + localVisits).toLocaleString();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputs = Array.from(document.querySelectorAll('.nav-input'));
+        inputs.forEach((input, index) => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault(); 
+                    const nextInput = inputs[index + 1];
+                    if (nextInput) nextInput.focus();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevInput = inputs[index - 1];
+                    if (prevInput) prevInput.focus();
+                }
+            });
+        });
+    });
+
+    function getCsat(t) {
+        const table = {
+            20: 9.09, 21: 8.90, 22: 8.72, 23: 8.56, 24: 8.40,
+            25: 8.24, 26: 8.09, 27: 7.95, 28: 7.82, 29: 7.69,
+            30: 7.56, 31: 7.43, 32: 7.30, 33: 7.18, 34: 7.06, 35: 6.95
+        };
+        if(table[t]) return table[t];
+        let lower = Math.floor(t);
+        let upper = Math.ceil(t);
+        if (t < 20) return 9.09 + (20 - t) * 0.19; 
+        if (t > 35) return 6.95 - (t - 35) * 0.11; 
+        let fraction = t - lower;
+        return table[lower] + fraction * (table[upper] - table[lower]);
+    }
+
+    function calculateAeration() {
+        const species = document.getElementById('species').value || 'สัตว์น้ำ';
+        const feed = parseFloat(document.getElementById('feed').value);
+        const protein = parseFloat(document.getElementById('protein').value);
+        const temp = parseFloat(document.getElementById('temp').value);
+        const targetDO = parseFloat(document.getElementById('targetDO').value);
+        const alpha = parseFloat(document.getElementById('alphaSelect').value);
+        const beta = parseFloat(document.getElementById('betaSelect').value);
+        const aeratorType = document.getElementById('aeratorType').value;
+
+        if(isNaN(feed) || isNaN(protein) || isNaN(temp) || isNaN(targetDO)) {
+            alert('กรุณากรอกข้อมูลตัวเลขให้ครบถ้วนครับ');
+            return;
+        }
+
+        const ocrFish = feed * 0.25;
+        const pTAN = feed * (protein / 100) * 0.092;
+        const ocrBact = pTAN * 4.57;
+        const totalOcrDay = (ocrFish + ocrBact) * 1.2;
+        const aotrHr = totalOcrDay / 24; 
+
+        const csatFresh = getCsat(temp);
+        const actualCsat = csatFresh * beta;
+        const drivingForce = actualCsat - targetDO;
+        
+        let cf = 0;
+        if (drivingForce <= 0) {
+            cf = 0.01; 
+        } else {
+            cf = (drivingForce / 9.09) * Math.pow(1.024, temp - 20) * alpha;
+        }
+
+        const sotr = aotrHr / cf;
+
+        document.getElementById('resOcrFish').innerText = ocrFish.toFixed(2) + ' kg O₂/วัน';
+        document.getElementById('resOcrBact').innerText = ocrBact.toFixed(2) + ' kg O₂/วัน';
+        document.getElementById('resOcrTotal').innerText = aotrHr.toFixed(2) + ' kg O₂/ชั่วโมง';
+        document.getElementById('resCf').innerText = (cf * 100).toFixed(1) + ' %';
+        document.getElementById('resSotr').innerText = sotr.toFixed(2) + ' kg O₂/ชั่วโมง';
+        
+        generateDiscussion(species, feed, temp, alpha, beta, targetDO, cf, aotrHr, sotr, aeratorType);
+        
+        document.getElementById('btnPrint').style.display = 'block';
+    }
+
+    function generateDiscussion(species, feed, temp, alpha, beta, targetDO, cf, aotrHr, sotr, aeratorType) {
+        
+        let motorHtml = '';
+        let finalKw = 0;
+        let finalHp = 0;
+        let storySpecific = '';
+        
+        const isHybrid = aeratorType.startsWith('hybrid_');
+
+        if (!isHybrid) {
+            let equip = aeratorData[aeratorType];
+            finalKw = sotr / equip.sae;
+            finalHp = finalKw * 1.341;
+            
+            motorHtml = `
+                <div style="font-size: 1.1em; color: var(--teal-dark);">พิกัดมอเตอร์สำหรับ <b>${equip.name}</b> คือ:</div>
+                <div style="font-size: 1.6em; font-weight: 700; color: #00796B; margin-top: 5px;">
+                    ${finalKw.toFixed(2)} kW <br> <span style="font-size: 0.8em; color: #004D40;">(ประมาณ ${finalHp.toFixed(2)} แรงม้า)</span>
+                </div>
+            `;
+            
+            storySpecific = `<p>💡 คุณเลือกใช้ <strong>${equip.name}</strong> ซึ่งจะต้องใช้มอเตอร์รวม <strong>${finalKw.toFixed(2)} kW (${finalHp.toFixed(2)} แรงม้า)</strong> 
+            <br>📌 <em>ข้อสังเกต:</em> `;
+            
+            if(aeratorType === 'pw') storySpecific += `เครื่องตีน้ำใบพัดเด่นเรื่องการสร้างกระแสน้ำ แต่กินพลังงานไฟฟ้าสูงในระยะยาวครับ`;
+            else if(aeratorType === 'airdisc') storySpecific += `จานจ่ายอากาศให้การกระจายลมจากพื้นบ่อได้ดี เป็นมาตรฐานที่ดูแลรักษาง่ายครับ`;
+            else if(aeratorType === 'airlift') storySpecific += `แอร์ลิฟท์ช่วยหมุนเวียนน้ำและดึงของเสียจากก้นบ่อขึ้นมาได้ยอดเยี่ยม แม้ประสิทธิภาพการละลายก๊าซอาจจะไม่สูงที่สุดครับ`;
+            else if(aeratorType === 'mnb21') storySpecific += `ถือว่าตัดสินใจได้ยอดเยี่ยม! ฟองนาโนละลายน้ำได้ลึกและเสถียรสุดๆ ช่วยประหยัดค่าไฟได้ดีมากเมื่อเทียบกับใบพัดทั่วไปครับ`;
+            else if(aeratorType === 'mnb99') storySpecific += `คุณเลือกระบบที่มีประสิทธิภาพการถ่ายเทมวลสูงสุด! มอเตอร์จะใช้พลังงานน้อยมาก แต่ต้องมีการบริหารจัดการต้นทุนถังออกซิเจนบริสุทธิ์เพิ่มเติมครับ`;
+            storySpecific += `</p>`;
+
+        } else {
+            let parts = aeratorType.split('_');
+            let eq1 = aeratorData[parts[1]];
+            let eq2 = aeratorData[parts[2]];
+            
+            let kw1 = (sotr / 2) / eq1.sae;
+            let hp1 = kw1 * 1.341;
+            
+            let kw2 = (sotr / 2) / eq2.sae;
+            let hp2 = kw2 * 1.341;
+            
+            finalKw = kw1 + kw2;
+            finalHp = finalKw * 1.341;
+            
+            motorHtml = `
+                <div style="font-size: 1.1em; color: var(--teal-dark);">พิกัดมอเตอร์สำหรับ <b>ระบบบูรณาการ</b> <br>(แบ่งภาระงาน 50:50):</div>
+                <div class="hybrid-box">
+                    <div>
+                        <div style="font-size: 0.9em; color: #004D40; font-weight:bold;">${eq1.icon} ${eq1.name}</div>
+                        <div style="font-size: 1.3em; font-weight: 700; color: #E65100;">${kw1.toFixed(2)} kW</div>
+                        <div style="font-size: 0.8em; color: #666;">(${hp1.toFixed(2)} HP)</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9em; color: #004D40; font-weight:bold;">${eq2.icon} ${eq2.name}</div>
+                        <div style="font-size: 1.3em; font-weight: 700; color: #00796B;">${kw2.toFixed(2)} kW</div>
+                        <div style="font-size: 0.8em; color: #666;">(${hp2.toFixed(2)} HP)</div>
+                    </div>
+                </div>
+                <div style="font-size: 1.2em; font-weight: 700; color: #004D40; margin-top: 15px;">
+                    รวมมอเตอร์ทั้งหมด: ${finalKw.toFixed(2)} kW <span style="font-size: 0.8em;">(${finalHp.toFixed(2)} HP)</span>
+                </div>
+            `;
+            
+            storySpecific = `
+            <p>💡 คุณเลือกใช้ <strong>ระบบผสมผสาน (Hybrid)</strong> ซึ่งเป็นสูตรเด็ดของการบริหารฟาร์มยุคใหม่! โดยการแบ่งหน้าที่กันอย่างละครึ่ง (50:50):</p>
+            <ul style="background: rgba(255,255,255,0.6); padding: 20px 20px 20px 40px; border-radius: 12px; border-left: 4px solid var(--accent);">
+                <li style="margin-bottom: 10px;"><strong>ใช้ ${eq1.name} (${kw1.toFixed(2)} kW):</strong> รับหน้าที่ในการสร้างการเคลื่อนที่ของมวลน้ำและการกระจายตัวพื้นฐาน</li>
+                <li><strong>ใช้ ${eq2.name} (${kw2.toFixed(2)} kW):</strong> รับหน้าที่เสริมประสิทธิภาพการละลายออกซิเจนลงลึกถึงจุดที่ต้องการ</li>
+            </ul>
+            <p>เมื่อมัดรวมกันแล้ว ระบบนี้จะใช้มอเตอร์รวมเพียง <strong>${finalKw.toFixed(2)} kW (${finalHp.toFixed(2)} แรงม้า)</strong> ได้ทั้งกระแสน้ำที่ดี และประหยัดพลังงาน ถือเป็นการแก้จุดอ่อนและดึงจุดแข็งของอุปกรณ์แต่ละตัวมาใช้ได้อย่างคุ้มค่าครับ!</p>`;
+        }
+
+        document.getElementById('motorResultContainer').innerHTML = motorHtml;
+
+        let story = `
+            <p>จากการประเมิน บ่อที่เลี้ยง${species}และให้อาหาร ${feed} กิโลกรัมต่อวัน จะมีความต้องการใช้ออกซิเจนรวมกันเกือบๆ <strong>${aotrHr.toFixed(2)} กิโลกรัมในทุกๆ 1 ชั่วโมง</strong> (รวมการหายใจของสัตว์น้ำและแบคทีเรียบำบัดของเสียแล้ว)</p>
+
+            <p>แต่เนื่องจากสภาพน้ำมีอุณหภูมิ ${temp}°C พร้อมด้วยความขุ่นและสารอินทรีย์ต่างๆ ทำให้การละลายออกซิเจนลงน้ำจริงยากขึ้น เครื่องให้อากาศจะแสดงประสิทธิภาพได้เพียง <strong>${(cf * 100).toFixed(1)}%</strong> จากสเปกมาตรฐานของโรงงาน (SOTR) เพื่อให้ได้ค่า DO เป้าหมายที่ ${targetDO} mg/L ระบบจึงต้องการเครื่องให้อากาศที่ผลิตออกซิเจนมาตรฐานได้รวม <strong>${sotr.toFixed(2)} กิโลกรัม/ชั่วโมง</strong></p>
+            
+            ${storySpecific}
+
+            <div class="guru-tip">
+                <p>🕹️ <strong>แนวปฏิบัติที่ดีในการประหยัดพลังงาน:</strong></p>
+                <p>เนื่องจากการใช้ออกซิเจนจะพุ่งสูงสุด (Peak OCR) ช่วง 1-2 ชั่วโมงหลังการให้อาหาร หากฟาร์มยังไม่มีงบประมาณสำหรับติดตั้ง <strong>"เซ็นเซอร์วัด DO ร่วมกับ VFD"</strong> ขอแนะนำให้ใช้ <strong>"การจัดการเปิด-ปิดเครื่องด้วยมือ (Manual Timer)"</strong></p>
+                <p>โดยการเปิดเครื่องให้อากาศแบบเต็มกำลังเฉพาะช่วงให้อาหารและหลังให้อาหารใหม่ๆ เมื่อสัตว์น้ำเริ่มสงบลง สามารถปิดเครื่องให้อากาศลงบางส่วน เพื่อรักษา DO พื้นฐานไว้ วิธีนี้จะช่วยบริหารจัดการพลังงานให้มีประสิทธิภาพ และประหยัดค่าไฟได้อย่างมหาศาลโดยไม่ต้องลงทุนเพิ่มครับ</p>
+            </div>
+        `;
+
+        document.getElementById('discussionContent').innerHTML = story;
+        document.getElementById('discussionSection').style.display = 'block';
+        
+        document.getElementById('discussionSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+</script>
+</body>
+</html>
